@@ -48,7 +48,6 @@ class TestContainersSpec extends Specification {
 
 
         sql = Sql.newInstance(mySQL.jdbcUrl, mySQL.username, mySQL.password, mySQL.driverClassName)
-        //createLocalDb(sql)
 
         HikariConfig config = new HikariConfig()
         config.jdbcUrl = mySQL.jdbcUrl
@@ -58,21 +57,6 @@ class TestContainersSpec extends Specification {
         config.maximumPoolSize = 5
         dataSource = new HikariDataSource(config)
     }
-
-/*    def createLocalDb(Sql sql) {
-        ['cleanup.sql', 'schema.sql'].collect{ path ->
-            getClass().getResource("/$path").text.trim()
-        }.each { queries ->
-            queries.tokenize(";").each{
-                try {
-                    sql.execute(it)
-                } catch(Exception e) {
-                    println e.message
-                }
-            }
-        }
-        println 'Local database ready'
-    }*/
 
     static Network createReusableNetwork(String name) {
         String id = DockerClientFactory.instance().client().listNetworksCmd().exec().stream()
