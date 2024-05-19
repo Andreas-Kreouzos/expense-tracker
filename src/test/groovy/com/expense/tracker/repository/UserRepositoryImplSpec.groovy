@@ -25,12 +25,12 @@ class UserRepositoryImplSpec extends TestContainersSpec {
 
         then: "the user is saved"
         def dbUser = sql.firstRow("SELECT * FROM EXPENSE_TRACKER.USERS WHERE USERNAME = ?", [user.username])
-        assert dbUser != null
-        assert dbUser.get('ID') == result
-        assert dbUser.get('USERNAME') == user.username
-        assert dbUser.get('PASSWORD') == user.password
-        assert dbUser.get('FIRSTNAME') == user.firstName
-        assert dbUser.get('LASTNAME') == user.lastName
-        assert dbUser.get('EMAIL') == user.email
+        dbUser != null
+        dbUser.get('ID') == result
+        dbUser.get('USERNAME') == user.username
+        dbUser.get('PASSWORD') == user.password
+        dbUser.get('FIRSTNAME') == user.firstName
+        dbUser.get('LASTNAME') == user.lastName
+        dbUser.get('EMAIL') == user.email
     }
 }
