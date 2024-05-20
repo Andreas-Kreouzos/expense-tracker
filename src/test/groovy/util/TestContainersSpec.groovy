@@ -1,4 +1,4 @@
-package com.expense.tracker.util
+package util
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
