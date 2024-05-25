@@ -25,8 +25,7 @@ class UserRepositoryImplSpec extends TestContainersSpec {
 
     def 'Successfully insert a new user in the database'() {
         given: 'a user'
-        def user = new User(username: username, password: password, firstName: firstName,
-                lastName: lastName, email: email)
+        def user = new User(username, password, firstName, lastName, email)
 
         when: 'calling the insert method'
         def result = repository.insert(user)
@@ -43,12 +42,10 @@ class UserRepositoryImplSpec extends TestContainersSpec {
 
     def 'Insert users with same username or email in the database fails'() {
         given: 'a first user'
-        def firstUser = new User(username: firstUsername, password: password, firstName: firstName,
-                lastName: lastName, email: firstEmail)
+        def firstUser = new User(firstUsername, password, firstName, lastName, firstEmail)
 
         and: 'a second user'
-        def secondUser = new User(username: secondUsername, password: password, firstName: firstName,
-                lastName: lastName, email: secondEmail)
+        def secondUser = new User(secondUsername, password, firstName, lastName, secondEmail)
 
         when: 'inserting the users'
         repository.insert(firstUser)
@@ -62,6 +59,28 @@ class UserRepositoryImplSpec extends TestContainersSpec {
         firstUsername | secondUsername | firstEmail                   | secondEmail                   || errorMessage
         'testUser'    | 'testUser'     | 'my.first.email@hotmail.com' | 'my.second.email@hotmail.com' || duplicateUsernameErrorMessage()
         'testUser1'   | 'testUser2'    | 'my.email@hotmail.com'       | 'my.email@hotmail.com'        || duplicateEmailErrorMessage()
+    }
+
+    def 'Successfully select a user by Id from the database'() {
+        given: 'a user'
+        def user = new User(username, password, firstName, lastName, email)
+
+        and: 'insert the user in the database'
+        repository.insert(user)
+
+        and: 'manually select the Id of the user'
+        def dbUser = sql.firstRow("SELECT * FROM EXPENSE_TRACKER.USERS WHERE USERNAME = ?", [username])
+
+        when: 'calling the select method with the user ID'
+        def selectedUser = repository.select(dbUser.get('ID'))
+
+        then: 'the correct user is retrieved'
+        selectedUser.id == dbUser.get('ID')
+        selectedUser.username == user.username
+        selectedUser.password == user.password
+        selectedUser.firstName == user.firstName
+        selectedUser.lastName == user.lastName
+        selectedUser.email == user.email
     }
 
     def duplicateUsernameErrorMessage() {
