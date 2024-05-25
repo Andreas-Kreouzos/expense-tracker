@@ -1,6 +1,7 @@
 package integration.com.expense.tracker
 
 import com.expense.tracker.entity.User
+import com.expense.tracker.exception.UserNotFoundException
 import com.expense.tracker.repository.UserRepositoryImpl
 import util.TestContainersSpec
 import org.springframework.boot.test.context.SpringBootTest
@@ -61,14 +62,14 @@ class UserRepositoryImplSpec extends TestContainersSpec {
         'testUser1'   | 'testUser2'    | 'my.email@hotmail.com'       | 'my.email@hotmail.com'        || duplicateEmailErrorMessage()
     }
 
-    def 'Successfully select a user by Id from the database'() {
+    def 'Successfully select a user by id from the database'() {
         given: 'a user'
         def user = new User(username, password, firstName, lastName, email)
 
         and: 'insert the user in the database'
         repository.insert(user)
 
-        and: 'manually select the Id of the user'
+        and: 'manually select the id of the user'
         def dbUser = sql.firstRow("SELECT * FROM EXPENSE_TRACKER.USERS WHERE USERNAME = ?", [username])
 
         when: 'calling the select method with the user ID'
@@ -81,6 +82,20 @@ class UserRepositoryImplSpec extends TestContainersSpec {
         selectedUser.firstName == user.firstName
         selectedUser.lastName == user.lastName
         selectedUser.email == user.email
+    }
+
+    def 'Exception thrown when select a user by id from the database'() {
+        given: 'a non-existent user id'
+        def nonExistentUserId = 99999
+
+        when: 'calling the select method'
+        repository.select(nonExistentUserId)
+
+        then: 'an exception is thrown'
+        def ex = thrown(UserNotFoundException)
+
+        and: 'with an appropriate message'
+        ex.message.contains("User not found with ID: 99999")
     }
 
     def duplicateUsernameErrorMessage() {

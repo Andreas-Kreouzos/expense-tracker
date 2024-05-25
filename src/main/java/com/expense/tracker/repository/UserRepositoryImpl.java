@@ -1,6 +1,8 @@
 package com.expense.tracker.repository;
 
 import com.expense.tracker.entity.User;
+import com.expense.tracker.exception.UserNotFoundException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -25,7 +27,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User select(Long id) {
         String sql = "SELECT * FROM EXPENSE_TRACKER.USERS WHERE ID = ?";
-        return template.queryForObject(sql, userRowMapper(), id);
+        try {
+            return template.queryForObject(sql, userRowMapper(), id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new UserNotFoundException("User not found with ID: " + id);
+        }
     }
 
     private RowMapper<User> userRowMapper() {
