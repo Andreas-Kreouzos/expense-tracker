@@ -13,4 +13,11 @@ public interface UserRepository {
      * @param user the user object provided
      */
     Integer insert(User user);
+
+    /**
+     * Select the user by using the id
+     *
+     * @param id the id of the user
+     */
+    User select(Long id);
 }
