@@ -34,6 +34,12 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    @Override
+    public Integer update(Long id, String firstName, String lastName) {
+        String sql = "UPDATE EXPENSE_TRACKER.USERS SET FIRSTNAME = ?, LASTNAME = ? WHERE ID = ?";
+        return template.update(sql, firstName, lastName, id);
+    }
+
     private RowMapper<User> userRowMapper() {
         return (rs, rowNum) -> new User(
                 rs.getLong("ID"),

@@ -20,4 +20,11 @@ public interface UserRepository {
      * @param id the id of the user
      */
     User select(Long id);
+
+    /**
+     * Update the user by using the id
+     *
+     * @param id the id of the user
+     */
+    Integer update(Long id, String firstName, String lastName);
 }
